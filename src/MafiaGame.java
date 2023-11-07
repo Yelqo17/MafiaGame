@@ -52,7 +52,7 @@ public class MafiaGame {
     }
     private void rolesDistribution() {
         for (int i = 0; i < mafiaCount; i++) {
-            Player mafia = new Mafia(i + 1, Role.MAFIA, players);
+            Player mafia = new Mafia(i + 1, Role.MAFIA, players, mafiaCount);
             players.add(mafia);
         }
 
