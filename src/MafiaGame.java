@@ -44,7 +44,7 @@ public class MafiaGame {
         nightPhase();
     }
     private void startMessagePrinting(){
-        if (mafiaCount == 1) {
+        if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
             System.out.println("В игре " + playerCount + " игроков" + " и "+ MafiaGame.mafiaCount + " мафия.");
         } else {
             System.out.println("В игре " + playerCount + " игроков" + " и "+ MafiaGame.mafiaCount + " мафий.");
@@ -341,7 +341,7 @@ public class MafiaGame {
                 System.out.print("Игрок " + player.playerId + " ");
             }
         }
-        if (mafiaCount == 1) {
+        if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
             System.out.println("был мафией!");
         }
         else {
