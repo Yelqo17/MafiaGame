@@ -16,17 +16,17 @@ public class MafiaGame {
     public MafiaGame(int numberOfPlayers) {
         playerCount = numberOfPlayers;
 
-        currentUserId = ThreadLocalRandom.current().nextInt(1, numberOfPlayers + 1);;
+        currentUserId = ThreadLocalRandom.current().nextInt(1, playerCount + 1) ;
 
-        if (numberOfPlayers == IConsts.MIN_PLAYERS) {
+        if (playerCount >= IConsts.MIN_PLAYERS && playerCount <= IConsts.MIN_PLAYERS + 1) {
             mafiaCount = IConsts.MIN_MAFIA_COUNT;
-            citizenCount = numberOfPlayers - mafiaCount - IConsts.COMMISSAR_COUNT;
-        } else if (numberOfPlayers >= IConsts.MIDDLE_PLAYERS - 1 && numberOfPlayers <= IConsts.MIDDLE_PLAYERS) {
-            mafiaCount = IConsts.MIN_MAFIA_COUNT + 1;
-            citizenCount = numberOfPlayers - mafiaCount - IConsts.COMMISSAR_COUNT;
-        } else if (numberOfPlayers >= IConsts.MIDDLE_PLAYERS + 1 && numberOfPlayers <= IConsts.MAX_PLAYERS) {
+            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
+        } else if (playerCount >= IConsts.MIDDLE_PLAYERS - 1 && playerCount <= IConsts.MIDDLE_PLAYERS + 1) {
+            mafiaCount = IConsts.MAX_MAFIA_COUNT - 1;
+            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
+        } else if (playerCount >= IConsts.MIDDLE_PLAYERS + 1 && playerCount <= IConsts.MAX_PLAYERS) {
             mafiaCount = IConsts.MAX_MAFIA_COUNT;
-            citizenCount = numberOfPlayers - mafiaCount - IConsts.COMMISSAR_COUNT;
+            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
         } else {
             throw new IllegalArgumentException("Неверное количество игроков!");
         }
@@ -39,14 +39,14 @@ public class MafiaGame {
 
         eliminatedIds = new ArrayList<>();
 
-        rolesDistribution(playerCount);
+        rolesDistribution();
 
         displayAlivePlayers();
 
         nightPhase();
     }
 
-    public void rolesDistribution(int numberOfPlayers) {
+    public void rolesDistribution() {
         for (int i = 0; i < mafiaCount; i++) {
             Player mafia = new Mafia(i + 1, Role.MAFIA, players);
             players.add(mafia);
@@ -55,7 +55,7 @@ public class MafiaGame {
         Player commissar = new Commissar(mafiaCount + 1, Role.COMMISSAR, players);
         players.add(commissar);
 
-        for (int i = mafiaCount + 1; i < numberOfPlayers; i++) {
+        for (int i = mafiaCount + 1; i < playerCount; i++) {
             Player citizen = new Citizen(i + 1,  Role.CITIZEN, players);
             players.add(citizen);
         }
@@ -64,19 +64,19 @@ public class MafiaGame {
     }
 
     public void printRole(){
-        Player currentPlayer = getCurrentPlayer(currentUserId);
+        Player currentPlayer = getCurrentPlayer();
 
         currentPlayer.printRole();
         currentPlayer.printId();
     }
 
-    public Player getCurrentPlayer(int currentUserId) {
-        return players.get(currentUserId);
+    public Player getCurrentPlayer() {
+        return players.get(currentUserId - 1);
     }
 
     public void nightPhase() {
         Scanner scanner = new Scanner(System.in);
-        Player currentPlayer = getCurrentPlayer(currentUserId);
+        Player currentPlayer = getCurrentPlayer();
         System.out.println("-----------------");
         System.out.println("Все игроки засыпают. Мафия и комиссар делают ход...");
 
@@ -164,7 +164,7 @@ public class MafiaGame {
                             public void run() {
                                 System.out.println("Игроки, теперь голосуйте за игрока, которого вы подозреваете.");
                                 System.out.println("У вас есть 30 секунд.");
-                                Player currentPlayer = getCurrentPlayer(currentUserId);
+                                Player currentPlayer = getCurrentPlayer();
                                 int currentPlayerId = currentPlayer.playerId;
 
                                 if (currentPlayer.isAlive) {
