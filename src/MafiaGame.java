@@ -6,20 +6,22 @@ import java.util.Timer;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MafiaGame {
-    private final List<Player> players;
-    private final List<Integer> eliminatedIds;
+    private List<Player> players;
+    private List<Integer> eliminatedIds;
+    private static int playerCount;
     private static int mafiaCount;
     private final int citizenCount;
     private final int currentUserId;
+    public MafiaGame(int numberOfPlayers) {
+        playerCount = numberOfPlayers;
 
-    public MafiaGame(int playerCount) {
-        currentUserId = ThreadLocalRandom.current().nextInt(1, playerCount + 1);;
+        currentUserId = ThreadLocalRandom.current().nextInt(1, playerCount + 1) ;
 
-        if (playerCount == IConsts.MIN_PLAYERS) {
+        if (playerCount >= IConsts.MIN_PLAYERS && playerCount <= IConsts.MIN_PLAYERS + 1) {
             mafiaCount = IConsts.MIN_MAFIA_COUNT;
             citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
-        } else if (playerCount >= IConsts.MIDDLE_PLAYERS - 1 && playerCount <= IConsts.MIDDLE_PLAYERS) {
-            mafiaCount = IConsts.MIN_MAFIA_COUNT + 1;
+        } else if (playerCount >= IConsts.MIDDLE_PLAYERS - 1 && playerCount <= IConsts.MIDDLE_PLAYERS + 1) {
+            mafiaCount = IConsts.MAX_MAFIA_COUNT - 1;
             citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
         } else if (playerCount >= IConsts.MIDDLE_PLAYERS + 1 && playerCount <= IConsts.MAX_PLAYERS) {
             mafiaCount = IConsts.MAX_MAFIA_COUNT;
@@ -27,23 +29,30 @@ public class MafiaGame {
         } else {
             throw new IllegalArgumentException("Неверное количество игроков!");
         }
-
-        System.out.println("В игре " + playerCount + " игроков" + " и "+ MafiaGame.mafiaCount + " мафий.");
+    }
+    public void startGame() {
+        startMessagePrinting();
 
         players = new ArrayList<>();
 
         eliminatedIds = new ArrayList<>();
 
-        rolesDistribution(playerCount);
+        rolesDistribution();
 
         displayAlivePlayers();
 
         nightPhase();
     }
-
-    public void rolesDistribution(int playerCount) {
+    private void startMessagePrinting(){
+        if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
+            System.out.println("В игре " + playerCount + " игроков" + " и "+ MafiaGame.mafiaCount + " мафия.");
+        } else {
+            System.out.println("В игре " + playerCount + " игроков" + " и "+ MafiaGame.mafiaCount + " мафий.");
+        }
+    }
+    private void rolesDistribution() {
         for (int i = 0; i < mafiaCount; i++) {
-            Player mafia = new Mafia(i + 1, Role.MAFIA, players);
+            Player mafia = new Mafia(i + 1, Role.MAFIA, players, mafiaCount);
             players.add(mafia);
         }
 
@@ -57,21 +66,34 @@ public class MafiaGame {
 
         printRole();
     }
-
-    public void printRole(){
-        Player currentPlayer = getCurrentPlayer(currentUserId);
+    private void printRole(){
+        Player currentPlayer = getCurrentPlayer();
 
         currentPlayer.printRole();
         currentPlayer.printId();
     }
-
-    public Player getCurrentPlayer(int currentUserId) {
-        return players.get(currentUserId);
+    private Player getCurrentPlayer() {
+        return players.get(currentUserId - 1);
     }
-
-    public void nightPhase() {
+    private void displayAlivePlayers() {
+        System.out.print("В живых осталось " + getCountAlivePlayers() + " игроков. ");
+        for (Player player : players) {
+            if(player.getStatus())
+                System.out.print("Игрок " + player.playerId + " ");
+        }
+        System.out.println("живы");
+    }
+    private int getCountAlivePlayers() {
+        int countAlivePlayers = 0;
+        for (Player player : players) {
+            if(player.getStatus())
+                countAlivePlayers++;
+        }
+        return countAlivePlayers;
+    }
+    private void nightPhase() {
         Scanner scanner = new Scanner(System.in);
-        Player currentPlayer = getCurrentPlayer(currentUserId);
+        Player currentPlayer = getCurrentPlayer();
         System.out.println("-----------------");
         System.out.println("Все игроки засыпают. Мафия и комиссар делают ход...");
 
@@ -129,12 +151,32 @@ public class MafiaGame {
                 timer.schedule(mafiaDiscussionTask, IConsts.TEST_TIME_IN_MILLISECONDS);
             }
         };
-
         timer.schedule(sleepTask, IConsts.TEST_TIME_IN_MILLISECONDS);
-
     }
+    private Player getPlayerById(int id) {
+        for (Player player : players) {
+            if (player.playerId == id) {
+                return player;
+            }
+        }
+        return null;
+    }
+    private void removePlayer(int targetId){
+        for (Player player : players) {
+            if (player.playerId == targetId) {
+                player.isAlive = false;
+            }
+        }
+    }
+    private int getProgramChoice(List<Integer> eliminatedIds) {
+        int random;
+        do {
+            random = ThreadLocalRandom.current().nextInt(1, players.size() + 1);
+        } while (eliminatedIds.contains(random));
 
-    public void dayPhase(Player newVictim) {
+        return random;
+    }
+    private void dayPhase(Player newVictim) {
 
         System.out.println("Утро наступило.");
         if (newVictim == null) {
@@ -142,8 +184,8 @@ public class MafiaGame {
         } else if (!newVictim.isAlive) {
             System.out.println("Игрок " + newVictim.playerId + " был убит ночью.");
         }
-        displayAlivePlayers();
 
+        displayAlivePlayers();
 
         Timer timer = new Timer();
         TimerTask afterNightTask = new TimerTask() {
@@ -159,19 +201,9 @@ public class MafiaGame {
                             public void run() {
                                 System.out.println("Игроки, теперь голосуйте за игрока, которого вы подозреваете.");
                                 System.out.println("У вас есть 30 секунд.");
-                                Player currentPlayer = getCurrentPlayer(currentUserId);
-                                int currentPlayerId = currentPlayer.playerId;
 
-                                if (currentPlayer.isAlive) {
-                                    System.out.println("Игрок " + currentPlayerId + ", введите номер игрока, за которого вы голосуете:");
-                                    Scanner scanner = new Scanner(System.in);
-                                    int targetId = scanner.nextInt();
-                                    Player target = getPlayerById(targetId);
-                                    if (target != null && target.isAlive) {
-                                        target.votes++;
-                                        System.out.println("Игрок " + currentPlayerId + " проголосовал за " + targetId);
-                                    }
-                                }
+                                Player currentPlayer = getCurrentPlayer();
+                                int currentPlayerId = currentPlayer.playerId;
 
                                 for (Player player : players) {
                                     if (player.playerId != currentPlayerId && player.isAlive) {
@@ -181,6 +213,17 @@ public class MafiaGame {
                                             target.votes++;
                                             System.out.println("Игрок " + player.playerId + " проголосовал за " + targetId);
                                         }
+                                    }
+                                }
+
+                                if (currentPlayer.isAlive) {
+                                    System.out.println("Игрок " + currentPlayerId + ", введите номер игрока, за которого вы голосуете:");
+                                    Scanner scanner = new Scanner(System.in);
+                                    int targetId = scanner.nextInt();
+                                    Player target = getPlayerById(targetId);
+                                    if (target != null && target.isAlive) {
+                                        target.votes++;
+                                        System.out.println("Игрок " + currentPlayerId + " проголосовал за " + targetId);
                                     }
                                 }
 
@@ -202,7 +245,7 @@ public class MafiaGame {
                                     } else if (determineWinner().equals("Civilians")) {
                                         System.out.println("Победили мирные жители!");
                                     }
-                                    displayAllMafia();
+                                    endMessagePrinting();
                                     System.exit(0);
                                 } else {
                                     nightPhase();
@@ -217,38 +260,7 @@ public class MafiaGame {
         };
         timer.schedule(afterNightTask, IConsts.TEST_TIME_IN_MILLISECONDS);
     }
-
-    public int getProgramChoice(List<Integer> eliminatedIds) {
-        int random;
-        do {
-            random = ThreadLocalRandom.current().nextInt(1, players.size() + 1);
-        } while (eliminatedIds.contains(random));
-
-        return random;
-    }
-    public void removePlayer(int targetId){
-        for (Player player : players) {
-            if (player.playerId == targetId) {
-                player.isAlive = false;
-            }
-        }
-    }
-    public Player getPlayerById(int id) {
-        for (Player player : players) {
-            if (player.playerId == id) {
-                return player;
-            }
-        }
-        return null;
-    }
-    public void resetPlayersVotes() {
-        for (Player player : players) {
-            if (player.votes != 0 && player.isAlive) {
-                player.votes = 0;
-            }
-        }
-    }
-    public Player determineEliminatedPlayer() {
+    private Player determineEliminatedPlayer() {
         Player eliminatedPlayer = null;
         int maxVotes = 0;
 
@@ -273,9 +285,34 @@ public class MafiaGame {
 
         return eliminatedPlayer;
     }
+    private void resetPlayersVotes() {
+        for (Player player : players) {
+            if (player.votes != 0 && player.isAlive) {
+                player.votes = 0;
+            }
+        }
+    }
+    private boolean checkForWinner() {
+        int mafiaAlive = 0;
+        int citizensAlive = 0;
 
+        for (Player player : players) {
+            if (player.isAlive) {
+                if (player.role == Role.MAFIA) {
+                    mafiaAlive++;
+                } else if (player.role == Role.CITIZEN || player.role == Role.COMMISSAR) {
+                    citizensAlive++;
+                }
+            }
+        }
 
-    public String determineWinner(){
+        if (mafiaAlive >= citizensAlive) {
+            return true;
+        }
+
+        return mafiaAlive == 0;
+    }
+    private String determineWinner(){
         int mafiaAlive = 0;
         int citizensAlive = 0;
 
@@ -298,48 +335,17 @@ public class MafiaGame {
             return "Error";
         }
     }
-    public boolean checkForWinner() {
-        int mafiaAlive = 0;
-        int citizensAlive = 0;
-
-        for (Player player : players) {
-            if (player.isAlive) {
-                if (player.role == Role.MAFIA) {
-                    mafiaAlive++;
-                } else if (player.role == Role.CITIZEN || player.role == Role.COMMISSAR) {
-                    citizensAlive++;
-                }
-            }
-        }
-
-        if (mafiaAlive >= citizensAlive) {
-            return true;
-        }
-
-        return mafiaAlive == 0;
-    }
-    public void displayAllMafia() {;
+    private void endMessagePrinting() {;
         for (Player player : players) {
             if(player.getRole() == Role.MAFIA) {
                 System.out.print("Игрок " + player.playerId + " ");
             }
         }
-        System.out.println("были мафиями!");
-    }
-    public int getCountAlivePlayers() {
-        int countAlivePlayers = 0;
-        for (Player player : players) {
-            if(player.getStatus())
-                countAlivePlayers++;
+        if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
+            System.out.println("был мафией!");
         }
-        return countAlivePlayers;
-    }
-    public void displayAlivePlayers() {
-        System.out.print("В живых осталось " + getCountAlivePlayers() + " игроков. ");
-        for (Player player : players) {
-            if(player.getStatus())
-                System.out.print("Игрок " + player.playerId + " ");
+        else {
+            System.out.println("были мафиями!");
         }
-        System.out.println("живы");
     }
 }

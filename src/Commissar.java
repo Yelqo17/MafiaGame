@@ -8,6 +8,6 @@ public class Commissar extends Player {
     }
 
     public void printRole() {
-        System.out.println("Твоя роль: " + this.role + ". Вы можете проверить роль игрока ночью.");
+        System.out.println("Твоя роль: Комиссар. Вы можете проверить роль игрока ночью.");
     }
 }

@@ -8,6 +8,6 @@ public class Citizen extends Player {
     }
 
     public void printRole() {
-        System.out.println("Твоя роль: " + this.role + ". У вас нет особой роли.");
+        System.out.println("Твоя роль: Мирный житель. У вас нет особой роли.");
     }
 }
