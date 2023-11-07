@@ -201,8 +201,20 @@ public class MafiaGame {
                             public void run() {
                                 System.out.println("Игроки, теперь голосуйте за игрока, которого вы подозреваете.");
                                 System.out.println("У вас есть 30 секунд.");
+
                                 Player currentPlayer = getCurrentPlayer();
                                 int currentPlayerId = currentPlayer.playerId;
+
+                                for (Player player : players) {
+                                    if (player.playerId != currentPlayerId && player.isAlive) {
+                                        int targetId = getProgramChoice(eliminatedIds);
+                                        Player target = getPlayerById(targetId);
+                                        if (target != null && target.isAlive) {
+                                            target.votes++;
+                                            System.out.println("Игрок " + player.playerId + " проголосовал за " + targetId);
+                                        }
+                                    }
+                                }
 
                                 if (currentPlayer.isAlive) {
                                     System.out.println("Игрок " + currentPlayerId + ", введите номер игрока, за которого вы голосуете:");
@@ -215,16 +227,7 @@ public class MafiaGame {
                                     }
                                 }
 
-                                for (Player player : players) {
-                                    if (player.playerId != currentPlayerId && player.isAlive) {
-                                        int targetId = getProgramChoice(eliminatedIds);
-                                        Player target = getPlayerById(targetId);
-                                        if (target != null && target.isAlive) {
-                                            target.votes++;
-                                            System.out.println("Игрок " + player.playerId + " проголосовал за " + targetId);
-                                        }
-                                    }
-                                }
+
 
                                 Player eliminatedPlayer = determineEliminatedPlayer();
 
