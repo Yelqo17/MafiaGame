@@ -12,7 +12,6 @@ public class Player {
         this.players = players;
         this.votes = 0;
     }
-
     public boolean getStatus() {
         return isAlive;
     }
@@ -26,7 +25,4 @@ public class Player {
     public void printRole() {
         System.out.println("Твоя роль: " + this.role);
     }
-
-
-
 }
