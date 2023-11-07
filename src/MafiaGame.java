@@ -227,8 +227,6 @@ public class MafiaGame {
                                     }
                                 }
 
-
-
                                 Player eliminatedPlayer = determineEliminatedPlayer();
 
                                 if (eliminatedPlayer != null) {
@@ -247,7 +245,7 @@ public class MafiaGame {
                                     } else if (determineWinner().equals("Civilians")) {
                                         System.out.println("Победили мирные жители!");
                                     }
-                                    displayAllMafia();
+                                    endMessagePrinting();
                                     System.exit(0);
                                 } else {
                                     nightPhase();
@@ -337,12 +335,17 @@ public class MafiaGame {
             return "Error";
         }
     }
-    private void displayAllMafia() {;
+    private void endMessagePrinting() {;
         for (Player player : players) {
             if(player.getRole() == Role.MAFIA) {
                 System.out.print("Игрок " + player.playerId + " ");
             }
         }
-        System.out.println("были мафиями!");
+        if (mafiaCount == 1) {
+            System.out.println("был мафией!");
+        }
+        else {
+            System.out.println("были мафиями!");
+        }
     }
 }

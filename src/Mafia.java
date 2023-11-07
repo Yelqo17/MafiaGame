@@ -16,6 +16,6 @@ public class Mafia extends Player {
                 System.out.print(player.playerId + " ");
             }
         }
-        System.out.println(" мафии вместе с тобой.");
+        System.out.println("мафии вместе с тобой.");
     }
 }
