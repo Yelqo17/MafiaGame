@@ -6,7 +6,9 @@ public class Main {
         Scanner s = new Scanner(System.in);
 
         System.out.println("Введите количество игроков от 8 до 12: ");
-        int playersCount = s.nextInt();
-        new MafiaGame(playersCount);
+        int numberOfPlayers = s.nextInt();
+        MafiaGame mafiaGame = new MafiaGame(numberOfPlayers);
+
+        mafiaGame.startGame();
     }
 }

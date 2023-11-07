@@ -6,28 +6,33 @@ import java.util.Timer;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MafiaGame {
-    private final List<Player> players;
-    private final List<Integer> eliminatedIds;
+    private List<Player> players;
+    private List<Integer> eliminatedIds;
+    private static int playerCount;
     private static int mafiaCount;
     private final int citizenCount;
     private final int currentUserId;
 
-    public MafiaGame(int playerCount) {
-        currentUserId = ThreadLocalRandom.current().nextInt(1, playerCount + 1);;
+    public MafiaGame(int numberOfPlayers) {
+        playerCount = numberOfPlayers;
 
-        if (playerCount == IConsts.MIN_PLAYERS) {
+        currentUserId = ThreadLocalRandom.current().nextInt(1, numberOfPlayers + 1);;
+
+        if (numberOfPlayers == IConsts.MIN_PLAYERS) {
             mafiaCount = IConsts.MIN_MAFIA_COUNT;
-            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
-        } else if (playerCount >= IConsts.MIDDLE_PLAYERS - 1 && playerCount <= IConsts.MIDDLE_PLAYERS) {
+            citizenCount = numberOfPlayers - mafiaCount - IConsts.COMMISSAR_COUNT;
+        } else if (numberOfPlayers >= IConsts.MIDDLE_PLAYERS - 1 && numberOfPlayers <= IConsts.MIDDLE_PLAYERS) {
             mafiaCount = IConsts.MIN_MAFIA_COUNT + 1;
-            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
-        } else if (playerCount >= IConsts.MIDDLE_PLAYERS + 1 && playerCount <= IConsts.MAX_PLAYERS) {
+            citizenCount = numberOfPlayers - mafiaCount - IConsts.COMMISSAR_COUNT;
+        } else if (numberOfPlayers >= IConsts.MIDDLE_PLAYERS + 1 && numberOfPlayers <= IConsts.MAX_PLAYERS) {
             mafiaCount = IConsts.MAX_MAFIA_COUNT;
-            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
+            citizenCount = numberOfPlayers - mafiaCount - IConsts.COMMISSAR_COUNT;
         } else {
             throw new IllegalArgumentException("Неверное количество игроков!");
         }
+    }
 
+    public void startGame() {
         System.out.println("В игре " + playerCount + " игроков" + " и "+ MafiaGame.mafiaCount + " мафий.");
 
         players = new ArrayList<>();
@@ -41,7 +46,7 @@ public class MafiaGame {
         nightPhase();
     }
 
-    public void rolesDistribution(int playerCount) {
+    public void rolesDistribution(int numberOfPlayers) {
         for (int i = 0; i < mafiaCount; i++) {
             Player mafia = new Mafia(i + 1, Role.MAFIA, players);
             players.add(mafia);
@@ -50,7 +55,7 @@ public class MafiaGame {
         Player commissar = new Commissar(mafiaCount + 1, Role.COMMISSAR, players);
         players.add(commissar);
 
-        for (int i = mafiaCount + 1; i < playerCount; i++) {
+        for (int i = mafiaCount + 1; i < numberOfPlayers; i++) {
             Player citizen = new Citizen(i + 1,  Role.CITIZEN, players);
             players.add(citizen);
         }
