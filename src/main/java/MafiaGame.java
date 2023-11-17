@@ -13,20 +13,6 @@ public class MafiaGame {
     private static int playerCount;
     private static int mafiaCount;
     private final int currentUserId;
-    private enum Ids {
-        ZERO,
-        ONE,
-        TWO,
-        THREE,
-        FOUR,
-        FIVE,
-        SIX,
-        SEVEN,
-        EIGHT,
-        NINE,
-        TEN
-    }
-
     public MafiaGame(int numberOfPlayers) {
         playerCount = numberOfPlayers;
 
