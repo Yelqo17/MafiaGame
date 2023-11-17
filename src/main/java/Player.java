@@ -21,6 +21,9 @@ public class Player {
     public Role getRole() {
         return role;
     }
+    public int getId() {
+        return playerId;
+    }
     public void printId() {
         System.out.println("Твой номер игрока: " + this.playerId);
     }

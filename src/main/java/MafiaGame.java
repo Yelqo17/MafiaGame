@@ -8,24 +8,25 @@ import java.util.Timer;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MafiaGame {
-    private static final String ANSI_RESET = "\u001B[0m";
-    private static final String ANSI_RED = "\u001B[31m";
-    private static final String ANSI_GREEN = "\u001B[32m";
-    private static final String ANSI_YELLOW = "\u001B[33m";
-    private static final String ANSI_BLUE = "\u001B[34m";
-    private static final String ANSI_MAGENTA = "\u001B[35m";
-    private static final String ANSI_CYAN = "\u001B[36m";
-    private static final String ANSI_BLACK = "\u001B[30m";
-    private static final String ANSI_PINK = "\u001B[95m";
-    private static final String ANSI_GRAY = "\u001B[37m";
-    private static final String ANSI_BRIGHT_BLACK = "\u001B[90m";
-
     private List<Player> players;
     private List<Integer> eliminatedIds;
     private static int playerCount;
     private static int mafiaCount;
-    private final int citizenCount;
     private final int currentUserId;
+    private enum Ids {
+        ZERO,
+        ONE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE,
+        SIX,
+        SEVEN,
+        EIGHT,
+        NINE,
+        TEN
+    }
+
     public MafiaGame(int numberOfPlayers) {
         playerCount = numberOfPlayers;
 
@@ -33,13 +34,10 @@ public class MafiaGame {
 
         if (playerCount >= IConsts.MIN_PLAYERS && playerCount <= IConsts.MIN_PLAYERS + 1) {
             mafiaCount = IConsts.MIN_MAFIA_COUNT;
-            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
         } else if (playerCount >= IConsts.MIDDLE_PLAYERS - 1 && playerCount <= IConsts.MIDDLE_PLAYERS + 1) {
             mafiaCount = IConsts.MAX_MAFIA_COUNT - 1;
-            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
         } else if (playerCount >= IConsts.MIDDLE_PLAYERS + 1 && playerCount <= IConsts.MAX_PLAYERS) {
             mafiaCount = IConsts.MAX_MAFIA_COUNT;
-            citizenCount = playerCount - mafiaCount - IConsts.COMMISSAR_COUNT;
         } else {
             throw new IllegalArgumentException("Неверное количество игроков!");
         }
@@ -94,7 +92,7 @@ public class MafiaGame {
         for (Player player : players) {
             if (player.getStatus()) {
                 String colorCode = getPlayerColor(player);
-                System.out.print("Игрок " + player.playerId + " " + colorCode + "●" + ANSI_RESET + " ");
+                System.out.print("Игрок " + player.getId() + " " + colorCode + "●" + IConsts.ANSI_RESET + " ");
             }
         }
         System.out.println("живы");
@@ -109,29 +107,29 @@ public class MafiaGame {
     }
 
     private String getPlayerColor(Player player) {
-        switch (player.playerId) {
-            case 1:
-                return ANSI_RED;
-            case 2:
-                return ANSI_GREEN;
-            case 3:
-                return ANSI_CYAN;
-            case 4:
-                return ANSI_YELLOW;
-            case 5:
-                return ANSI_BLUE;
-            case 6:
-                return ANSI_MAGENTA;
-            case 7:
-                return ANSI_BLACK;
-            case 8:
-                return ANSI_PINK;
-            case 9:
-                return ANSI_GRAY;
-            case 10:
-                return ANSI_BRIGHT_BLACK;
+        switch (player.getId()) {
+            case IConsts.PLAYER_ID_ONE:
+                return IConsts.ANSI_RED;
+            case IConsts.PLAYER_ID_TWO:
+                return IConsts.ANSI_GREEN;
+            case IConsts.PLAYER_ID_THREE:
+                return IConsts.ANSI_CYAN;
+            case IConsts.PLAYER_ID_FOUR:
+                return IConsts.ANSI_YELLOW;
+            case IConsts.PLAYER_ID_FIVE:
+                return IConsts.ANSI_BLUE;
+            case IConsts.PLAYER_ID_SIX:
+                return IConsts.ANSI_MAGENTA;
+            case IConsts.PLAYER_ID_SEVEN:
+                return IConsts.ANSI_BLACK;
+            case IConsts.PLAYER_ID_EIGHT:
+                return IConsts.ANSI_PINK;
+            case IConsts.PLAYER_ID_NINE:
+                return IConsts.ANSI_GRAY;
+            case IConsts.PLAYER_ID_TEN:
+                return IConsts.ANSI_BRIGHT_BLACK;
             default:
-                return ANSI_RESET;
+                return IConsts.ANSI_RESET;
         }
     }
     private void nightPhase() {
@@ -174,7 +172,7 @@ public class MafiaGame {
                             Player target = getPlayerById(targetId);
                             if (target != null) {
                                 String colorCode = getPlayerColor(target);
-                                System.out.println("Роль игрока " + target.playerId + " " + colorCode + "●" + ANSI_RESET + " - " + target.getCommissarCheck());
+                                System.out.println("Роль игрока " + target.getId() + " " + colorCode + "●" + IConsts.ANSI_RESET + " - " + target.getCommissarCheck());
                             }
                         } else {
                             // todo
@@ -203,7 +201,7 @@ public class MafiaGame {
     }
     private Player getPlayerById(int id) {
         for (Player player : players) {
-            if (player.playerId == id) {
+            if (player.getId() == id) {
                 return player;
             }
         }
@@ -211,7 +209,7 @@ public class MafiaGame {
     }
     private void removePlayer(int targetId){
         for (Player player : players) {
-            if (player.playerId == targetId) {
+            if (player.getId() == targetId) {
                 player.isAlive = false;
             }
         }
@@ -231,7 +229,7 @@ public class MafiaGame {
             System.out.println("Никто не был убит ночью.");
         } else if (!newVictim.isAlive) {
             String colorCode = getPlayerColor(newVictim);
-            System.out.print("Игрок " + newVictim.playerId + " " + colorCode + "●" + ANSI_RESET + " был убит ночью. ");
+            System.out.print("Игрок " + newVictim.getId() + " " + colorCode + "●" + IConsts.ANSI_RESET + " был убит ночью. ");
         }
     }
     private void dayPhase() {
@@ -254,15 +252,15 @@ public class MafiaGame {
                                 displayEstimatedTime();
 
                                 Player currentPlayer = getCurrentPlayer();
-                                int currentPlayerId = currentPlayer.playerId;
+                                int currentPlayerId = currentPlayer.getId();
 
                                 for (Player player : players) {
-                                    if (player.playerId != currentPlayerId && player.isAlive) {
+                                    if (player.getId() != currentPlayerId && player.isAlive) {
                                         int targetId = getProgramChoice(eliminatedIds);
                                         Player target = getPlayerById(targetId);
                                         if (target != null && target.isAlive) {
                                             target.votes++;
-                                            System.out.println("Игрок " + player.playerId + " проголосовал за " + targetId);
+                                            System.out.println("Игрок " + player.getId() + " проголосовал за " + targetId);
                                         }
                                     }
                                 }
@@ -308,8 +306,8 @@ public class MafiaGame {
         Player eliminatedPlayer = determineEliminatedPlayer();
         String colorCode = getPlayerColor(eliminatedPlayer);
         if (eliminatedPlayer != null) {
-            System.out.print("Игрок " + eliminatedPlayer.playerId + " " + colorCode + "●" + ANSI_RESET + " был исключен из игры. ");
-            eliminatedIds.add(eliminatedPlayer.playerId);
+            System.out.print("Игрок " + eliminatedPlayer.getId() + " " + colorCode + "●" + IConsts.ANSI_RESET + " был исключен из игры. ");
+            eliminatedIds.add(eliminatedPlayer.getId());
             eliminatedPlayer.isAlive = false;
         } else {
             System.out.println("Игрокам не удалось договориться и никто не исключен.");
@@ -394,7 +392,7 @@ public class MafiaGame {
         for (Player player : players) {
             String colorCode = getPlayerColor(player);
             if(player.getRole() == Role.MAFIA) {
-                System.out.print("Игрок " + player.playerId + " " + colorCode + "●" + ANSI_RESET + " ");
+                System.out.print("Игрок " + player.getId() + " " + colorCode + "●" + IConsts.ANSI_RESET + " ");
             }
         }
         if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
