@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MafiaGame {
     private List<Player> players;
     private List<Integer> eliminatedIds;
+    private List<Player> mafias;
     private static int playerCount;
     private static int mafiaCount;
     private final int currentUserId;
@@ -35,6 +36,8 @@ public class MafiaGame {
 
         eliminatedIds = new ArrayList<>();
 
+        mafias = new ArrayList<>();
+
         rolesDistribution();
 
         displayAlivePlayers();
@@ -52,6 +55,7 @@ public class MafiaGame {
         for (int i = 0; i < mafiaCount; i++) {
             Player mafia = new Mafia(i + 1, Role.MAFIA, players, mafiaCount);
             players.add(mafia);
+            mafias.add(mafia);
         }
 
         Player commissar = new Commissar(mafiaCount + 1, Role.COMMISSAR, players);
@@ -141,7 +145,7 @@ public class MafiaGame {
                         removePlayer(targetId);
                     }
                 } else {
-                    int targetId = getProgramChoice(eliminatedIds);
+                    int targetId = getProgramKillingChoice(mafias, eliminatedIds);
                     victim = getPlayerById(targetId);
                     eliminatedIds.add(targetId);
                     removePlayer(targetId);
@@ -160,8 +164,6 @@ public class MafiaGame {
                                 String colorCode = getPlayerColor(target);
                                 System.out.println("Роль игрока " + target.getId() + " " + colorCode + "●" + IConsts.ANSI_RESET + " - " + target.getCommissarCheck());
                             }
-                        } else {
-                            // todo
                         }
 
                         TimerTask commissarChoiceTask = new TimerTask() {
@@ -200,7 +202,17 @@ public class MafiaGame {
             }
         }
     }
-    private int getProgramChoice(List<Integer> eliminatedIds) {
+    private int getProgramKillingChoice(List<Player> mafias, List<Integer> eliminatedIds) {
+        int random;
+        Player player;
+        do {
+            random = ThreadLocalRandom.current().nextInt(1, players.size() + 1);
+            player = getPlayerById(random);
+        } while (eliminatedIds.contains(random) || mafias.contains(player));
+
+        return random;
+    }
+    private int getProgramVotingChoice(List<Integer> eliminatedIds) {
         int random;
         do {
             random = ThreadLocalRandom.current().nextInt(1, players.size() + 1);
@@ -242,7 +254,7 @@ public class MafiaGame {
 
                                 for (Player player : players) {
                                     if (player.getId() != currentPlayerId && player.isAlive) {
-                                        int targetId = getProgramChoice(eliminatedIds);
+                                        int targetId = getProgramVotingChoice(eliminatedIds);
                                         Player target = getPlayerById(targetId);
                                         if (target != null && target.isAlive) {
                                             target.votes++;
