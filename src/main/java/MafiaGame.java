@@ -8,6 +8,18 @@ import java.util.Timer;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class MafiaGame {
+    private static final String ANSI_RESET = "\u001B[0m";
+    private static final String ANSI_RED = "\u001B[31m";
+    private static final String ANSI_GREEN = "\u001B[32m";
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final String ANSI_BLUE = "\u001B[34m";
+    private static final String ANSI_MAGENTA = "\u001B[35m";
+    private static final String ANSI_CYAN = "\u001B[36m";
+    private static final String ANSI_BLACK = "\u001B[30m";
+    private static final String ANSI_PINK = "\u001B[95m";
+    private static final String ANSI_GRAY = "\u001B[37m";
+    private static final String ANSI_BRIGHT_BLACK = "\u001B[90m";
+
     private List<Player> players;
     private List<Integer> eliminatedIds;
     private static int playerCount;
@@ -80,8 +92,10 @@ public class MafiaGame {
     private void displayAlivePlayers() {
         System.out.print("В живых осталось " + getCountAlivePlayers() + " игроков. ");
         for (Player player : players) {
-            if(player.getStatus())
-                System.out.print("Игрок " + player.playerId + " ");
+            if (player.getStatus()) {
+                String colorCode = getPlayerColor(player);
+                System.out.print("Игрок " + player.playerId + " " + colorCode + "●" + ANSI_RESET + " ");
+            }
         }
         System.out.println("живы");
     }
@@ -92,6 +106,33 @@ public class MafiaGame {
                 countAlivePlayers++;
         }
         return countAlivePlayers;
+    }
+
+    private String getPlayerColor(Player player) {
+        switch (player.playerId) {
+            case 1:
+                return ANSI_RED;
+            case 2:
+                return ANSI_GREEN;
+            case 3:
+                return ANSI_CYAN;
+            case 4:
+                return ANSI_YELLOW;
+            case 5:
+                return ANSI_BLUE;
+            case 6:
+                return ANSI_MAGENTA;
+            case 7:
+                return ANSI_BLACK;
+            case 8:
+                return ANSI_PINK;
+            case 9:
+                return ANSI_GRAY;
+            case 10:
+                return ANSI_BRIGHT_BLACK;
+            default:
+                return ANSI_RESET;
+        }
     }
     private void nightPhase() {
         Scanner scanner = new Scanner(System.in);
@@ -132,7 +173,8 @@ public class MafiaGame {
                             int targetId = scanner.nextInt();
                             Player target = getPlayerById(targetId);
                             if (target != null) {
-                                System.out.println("Роль игрока " + target.playerId + " - " + target.getCommissarCheck());
+                                String colorCode = getPlayerColor(target);
+                                System.out.println("Роль игрока " + target.playerId + " " + colorCode + "●" + ANSI_RESET + " - " + target.getCommissarCheck());
                             }
                         } else {
                             // todo
@@ -144,7 +186,8 @@ public class MafiaGame {
                                 System.out.println("Ночь закончена. Переход к дневной фазе.");
                                 System.out.println("-----------------");
 
-                                dayPhase(finalVictim);
+                                nighKillPrinting(finalVictim);
+                                dayPhase();
                             }
                         };
                         timer.schedule(commissarChoiceTask, IConsts.TEST_TIME_IN_MILLISECONDS);
@@ -181,14 +224,17 @@ public class MafiaGame {
 
         return random;
     }
-    private void dayPhase(Player newVictim) {
 
+    private void nighKillPrinting(Player newVictim) {
         System.out.println("Утро наступило.");
         if (newVictim == null) {
             System.out.println("Никто не был убит ночью.");
         } else if (!newVictim.isAlive) {
-            System.out.println("Игрок " + newVictim.playerId + " был убит ночью.");
+            String colorCode = getPlayerColor(newVictim);
+            System.out.print("Игрок " + newVictim.playerId + " " + colorCode + "●" + ANSI_RESET + " был убит ночью. ");
         }
+    }
+    private void dayPhase() {
 
         displayAlivePlayers();
 
@@ -232,15 +278,8 @@ public class MafiaGame {
                                     }
                                 }
 
-                                Player eliminatedPlayer = determineEliminatedPlayer();
+                                displayEliminatedPlayer();
 
-                                if (eliminatedPlayer != null) {
-                                    System.out.println("Игрок " + eliminatedPlayer.playerId + " был исключен из игры.");
-                                    eliminatedIds.add(eliminatedPlayer.playerId);
-                                    eliminatedPlayer.isAlive = false;
-                                } else {
-                                    System.out.println("Игрокам не удалось договориться и никто не исключен.");
-                                }
                                 resetPlayersVotes();
 
                                 if (checkForWinner()) {
@@ -264,6 +303,17 @@ public class MafiaGame {
             }
         };
         timer.schedule(afterNightTask, IConsts.TEST_TIME_IN_MILLISECONDS);
+    }
+    private void displayEliminatedPlayer() {
+        Player eliminatedPlayer = determineEliminatedPlayer();
+        String colorCode = getPlayerColor(eliminatedPlayer);
+        if (eliminatedPlayer != null) {
+            System.out.print("Игрок " + eliminatedPlayer.playerId + " " + colorCode + "●" + ANSI_RESET + " был исключен из игры. ");
+            eliminatedIds.add(eliminatedPlayer.playerId);
+            eliminatedPlayer.isAlive = false;
+        } else {
+            System.out.println("Игрокам не удалось договориться и никто не исключен.");
+        }
     }
     private Player determineEliminatedPlayer() {
         Player eliminatedPlayer = null;
@@ -340,10 +390,11 @@ public class MafiaGame {
             return "Error";
         }
     }
-    private void endMessagePrinting() {;
+    private void endMessagePrinting() {
         for (Player player : players) {
+            String colorCode = getPlayerColor(player);
             if(player.getRole() == Role.MAFIA) {
-                System.out.print("Игрок " + player.playerId + " ");
+                System.out.print("Игрок " + player.playerId + " " + colorCode + "●" + ANSI_RESET + " ");
             }
         }
         if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
