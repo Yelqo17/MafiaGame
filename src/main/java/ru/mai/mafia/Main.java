@@ -1,4 +1,6 @@
-package main.java;
+package ru.mai.mafia;
+
+import ru.mai.mafia.domain.MafiaGame;
 
 import java.util.Scanner;
 
