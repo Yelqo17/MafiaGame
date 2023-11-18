@@ -1,4 +1,4 @@
-package ru.mai.mafia.domain;
+package com.github.yelqo17.domain;
 
 public interface IConsts {
     String ANSI_RESET = "\u001B[0m";

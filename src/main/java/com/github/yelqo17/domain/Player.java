@@ -1,4 +1,4 @@
-package ru.mai.mafia.domain;
+package com.github.yelqo17.domain;
 
 import java.util.List;
 public class Player {

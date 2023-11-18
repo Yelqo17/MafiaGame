@@ -1,6 +1,6 @@
-package ru.mai.mafia;
+package com.github.yelqo17;
 
-import ru.mai.mafia.domain.MafiaGame;
+import com.github.yelqo17.domain.MafiaGame;
 
 import java.util.Scanner;
 
