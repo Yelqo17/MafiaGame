@@ -33,7 +33,6 @@ public class MyDataBase {
                 truncate mafia.role restart identity;
                 """;
         execute(sql);
-        System.out.println("Data deleted from 'mafia.role', and role_id reset successfully.");
     }
 
     private void createSchema() {
