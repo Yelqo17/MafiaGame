@@ -1,32 +1,29 @@
 package com.github.yelqo17.domain;
 
-
 import com.github.yelqo17.persistence.RolePersistence;
 
-import java.util.List;
 public class Player {
-    private final int player_id;
-    private final String player_name;
-    private final int role_id;
+    private final int playerId;
+    private final int roleId;
+    private String name;
     private boolean status;
     private int votes;
-    private final RolePersistence rolePersistence = new RolePersistence();
-    List<Player> players;
-    public Player(int player_id, String player_name, int role_id, boolean status, int votes) {
-        this.player_id = player_id;
-        this.player_name = player_name;
-        this.role_id = role_id;
+    RolePersistence rolePersistence = new RolePersistence();
+    public Player(int playerId, String name, int roleId, boolean status, int votes) {
+        this.playerId = playerId;
+        this.name = name;
+        this.roleId = roleId;
         this.status = status;
         this.votes = votes;
     }
     public int getId() {
-        return player_id;
+        return playerId;
     }
     public String getName() {
-        return player_name;
+        return name;
     }
     public int getRoleId() {
-        return role_id;
+        return roleId;
     }
     public String getRole() {
         return rolePersistence.getById(getRoleId());
@@ -47,10 +44,13 @@ public class Player {
     public void resetVotes() {
         votes = 0;
     }
+    public void changeName(String newName) {
+         name = newName;
+    }
     public void printId() {
         System.out.println("Твой номер игрока: " + getId());
     }
     public void printRole() {
-        System.out.println("Твоя роль: " + this.role_id);
+        System.out.println("Твоя роль: " + getRole());
     }
 }
