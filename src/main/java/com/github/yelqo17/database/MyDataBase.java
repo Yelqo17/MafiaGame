@@ -52,8 +52,8 @@ public class MyDataBase {
     public void createTableRole() {
         String sql = """
                 create table if not exists mafia.role (
-                    role_id serial primary key,
-                    role_name varchar(50) not null
+                    id serial primary key,
+                    name varchar(50) not null
                 )
                 """;
         execute(sql);
@@ -62,9 +62,9 @@ public class MyDataBase {
     public Map<String, String> selectById(int id, String table, String... columnNames) {
         Map<String, String> result = new HashMap<>();
         String sql = """
-                select role_id, %s
+                select id, %s
                 from mafia.%s
-                where role_id = %d
+                where id = %d
                 """;
         String names = Stream.of(columnNames)
                 .collect(Collectors.joining(", "));

@@ -28,4 +28,8 @@ public interface IConsts {
     int MIN_MAFIA_COUNT = 1;
     int MAX_MAFIA_COUNT = 3;
     int TEST_TIME_IN_MILLISECONDS = 5000;
+    int ROLE_ID_BOUND = 3;
+    int MAFIA_ID = 1;
+    int COMMISSAR_ID = 2;
+    int CITIZEN_ID = 3;
 }

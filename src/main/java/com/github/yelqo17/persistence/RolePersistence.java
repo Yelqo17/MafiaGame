@@ -6,12 +6,12 @@ import java.util.Map;
 public class RolePersistence {
     private final MyDataBase db = MyDataBase.getInstance();
     private static final String TABLE_NAME = "role";
-    private static final String ID_NAME = "role_id";
-    private static final String ROLE_NAME = "role_name";
+    private static final String ID_NAME = "id";
+    private static final String ROLE_NAME = "name";
     public void createRole(String role_name) {
         String sql = """
                 insert into mafia.role
-                (role_name)
+                (name)
                 values
                 ('%s')
                 """;

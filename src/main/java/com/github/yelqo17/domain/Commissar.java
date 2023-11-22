@@ -6,6 +6,7 @@ public class Commissar extends Player {
     }
     @Override
     public void printRole() {
-        System.out.println("Твоя роль: Комиссар. Вы можете проверить роль игрока ночью.");
+        String commissar = rolePersistence.getById(IConsts.COMMISSAR_ID);
+        System.out.println("Твоя роль: " + commissar + ". Вы можете проверить роль игрока ночью.");
     }
 }
