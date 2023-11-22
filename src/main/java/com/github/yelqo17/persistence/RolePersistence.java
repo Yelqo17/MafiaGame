@@ -20,7 +20,7 @@ public class RolePersistence {
 
     public String getById(int role_id) {
         Map<String, String> fromDB = db.selectById(role_id, TABLE_NAME, ID_NAME, ROLE_NAME);
-        if (fromDB == null && fromDB.isEmpty()) {
+        if (fromDB == null || fromDB.isEmpty()) {
             return null;
         }
         return convertRole(fromDB);
