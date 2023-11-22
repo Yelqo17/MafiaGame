@@ -14,11 +14,11 @@ public class MafiaGame {
     private List<Player> players;
     private List<Integer> eliminatedIds;
     private List<Player> mafias;
-    private int playerCount;
-    private int mafiaCount;
-    private int citizenCount;
+    private final int playerCount;
+    private final int mafiaCount;
+    private final int citizenCount;
+    private final String userName;
     private int userId;
-    private String userName;
     private final RolePersistence rolePersistence = new RolePersistence();
     private final MyDataBase db = MyDataBase.getInstance();
     public MafiaGame(int numberOfPlayers, String playerName) {
