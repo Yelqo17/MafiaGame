@@ -1,15 +1,28 @@
 package com.github.yelqo17.domain;
 
+import java.util.List;
+
 public class Mafia extends Player {
 
-    public Mafia(int player_id, String player_name, int role_id, boolean status, int votes,
-                 int mafiaCount) {
-        super(player_id, player_name, role_id, status, votes);
+    private final int mafiaCount;
+    private final List<Player> players;
+    public Mafia(int playerId, String playerName, int roleId, boolean status, int votes, int mafiaCount, List<Player> players) {
+        super(playerId, playerName, roleId, status, votes);
+        this.mafiaCount = mafiaCount;
+        this.players = players;
     }
 
     @Override
-    public void printRole() {
-        String mafia = rolePersistence.getById(IConsts.MAFIA_ID);
-        System.out.println("Твоя роль: " + mafia);
+    public void teammatesPrinting() {
+        if (mafiaCount > IConsts.MIN_MAFIA_COUNT) {
+            System.out.print("Номера ");
+            String mafia = rolePersistence.getById(IConsts.MAFIA_ID);
+            for (Player player : players) {
+                if (player.getRole().equals(mafia)) {
+                    System.out.print(player.getId() + " ");
+                }
+            }
+            System.out.println("мафии вместе с тобой.");
+        }
     }
 }
