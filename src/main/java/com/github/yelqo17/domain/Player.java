@@ -28,12 +28,11 @@ public class Player {
     public String getRole() {
         return rolePersistence.getById(getRoleId());
     }
-
     public boolean getStatus() {
         return status;
     }
     public void changeStatus() {
-        status = false;
+        this.status = false;
     }
     public int getVotes() {
         return votes;
@@ -52,5 +51,8 @@ public class Player {
     }
     public void printRole() {
         System.out.println("Твоя роль: " + getRole());
+    }
+    public void teammatesPrinting() {
+        System.out.println("У вас нет сокомандников.");
     }
 }
