@@ -85,7 +85,8 @@ public class MafiaGame {
             boolean singleCicleCondition;
             do {
                 if (roleId == IConsts.MAFIA_ID && mafias.size() < mafiaCount) {
-                    Player mafia = new Mafia(i + 1, playerName, roleId, true, 0, mafiaCount, players);
+                    Player mafia = new Mafia(i + 1, playerName, roleId, true, 0, mafiaCount,
+                            players);
                     players.add(mafia);
                     mafias.add(mafia);
                     singleCicleCondition = false;
@@ -317,19 +318,22 @@ public class MafiaGame {
                                         Player target = getPlayerById(targetId);
                                         if (target != null && target.getStatus()) {
                                             target.incrementVotes();
-                                            System.out.println(player.getName() + " проголосовал за " + target.getName());
+                                            System.out.println(player.getName() + " проголосовал за " +
+                                                    target.getName());
                                         }
                                     }
                                 }
 
                                 if (currentPlayer.getStatus()) {
-                                    System.out.println(currentPlayer.getName() + ", введите номер игрока, за которого вы голосуете:");
+                                    System.out.println(currentPlayer.getName() +
+                                            ", введите номер игрока, за которого вы голосуете:");
                                     Scanner scanner = new Scanner(System.in);
                                     int targetId = scanner.nextInt();
                                     Player target = getPlayerById(targetId);
                                     if (target != null && target.getStatus()) {
                                         target.incrementVotes();
-                                        System.out.println(currentPlayer.getName() + " проголосовал за " + target.getName());
+                                        System.out.println(currentPlayer.getName() + " проголосовал за " +
+                                                target.getName());
                                     }
                                 }
 
@@ -373,7 +377,7 @@ public class MafiaGame {
         Player eliminatedPlayer = determineEliminatedPlayer();
         if (eliminatedPlayer != null) {
             printColoredPlayerName(eliminatedPlayer);
-            System.out.print("был исключен из игры. ");
+            System.out.println("был исключен из игры. ");
             eliminatedIds.add(eliminatedPlayer.getId());
             eliminatedPlayer.changeStatus();
         } else {
