@@ -18,7 +18,7 @@ public class RolePersistence_GetById_Test {
 
     @Test
     @DisplayName("when role exists in DB then return null")
-    public void whenStudentExistsInDbThenReturnNull() {
+    public void whenRoleExistsInDbThenReturnNull() {
         rolePersistence.createRole("Мафия");
         String role = rolePersistence.getById(1);
 
