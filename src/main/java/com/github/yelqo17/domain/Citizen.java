@@ -6,7 +6,7 @@ public class Citizen extends Player {
     }
     @Override
     public void printRole() {
-        String citizen = rolePersistence.getById(IConsts.CITIZEN_ID);
+        String citizen = rolePersistence.getById(Consts.CITIZEN_ID);
         System.out.println("Твоя роль: " + citizen + ". У вас нет особой роли.");
     }
 }

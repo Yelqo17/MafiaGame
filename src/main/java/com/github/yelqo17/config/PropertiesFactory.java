@@ -4,16 +4,20 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public final class PropertiesFactory {
+
     private static DatabaseProperties properties;
+
     private PropertiesFactory() {
 
     }
+
     public synchronized static DatabaseProperties getProperties() {
         if (properties == null) {
             init();
         }
         return properties;
     }
+
     private static void init() {
         String filePropertiesName = "application.properties";
 

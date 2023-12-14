@@ -11,8 +11,11 @@ import java.util.stream.Stream;
 
 
 public class MyDataBase {
+
     private static MyDataBase instance;
+
     private final DatabaseProperties properties = PropertiesFactory.getProperties();
+
     public synchronized static MyDataBase getInstance() {
         if (instance == null) {
             instance = new MyDataBase();
@@ -23,12 +26,13 @@ public class MyDataBase {
     private MyDataBase() {
         init();
     }
+
     private void init() {
         createSchema();
         createTableRole();
     }
 
-    public void deleteDataRoleTable() {
+    public void deleteRoleTable() {
         String sql = """
                 truncate mafia.role restart identity;
                 """;
@@ -41,6 +45,7 @@ public class MyDataBase {
                 """;
         execute(sql);
     }
+
     public void execute(String sql) {
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
@@ -49,6 +54,7 @@ public class MyDataBase {
             ex.printStackTrace();
         }
     }
+
     public void createTableRole() {
         String sql = """
                 create table if not exists mafia.role (
