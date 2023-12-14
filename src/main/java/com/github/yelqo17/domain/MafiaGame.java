@@ -30,15 +30,16 @@ public class MafiaGame {
         playerCount = numberOfPlayers;
         userName = playerName;
 
-        if (playerCount >= IConsts.MIN_PLAYERS && playerCount <= IConsts.MIN_PLAYERS + 1) {
-            mafiaCount = IConsts.MIN_MAFIA_COUNT;
-        } else if (playerCount >= IConsts.MIDDLE_PLAYERS - 1 && playerCount <= IConsts.MIDDLE_PLAYERS + 1) {
-            mafiaCount = IConsts.MAX_MAFIA_COUNT - 1;
-        } else if (playerCount >= IConsts.MIDDLE_PLAYERS + 1 && playerCount <= IConsts.MAX_PLAYERS) {
-            mafiaCount = IConsts.MAX_MAFIA_COUNT;
+        if (playerCount >= Consts.MIN_PLAYERS && playerCount <= Consts.MIN_PLAYERS + 1) {
+            mafiaCount = Consts.MIN_MAFIA_COUNT;
+        } else if (playerCount >= Consts.MIDDLE_PLAYERS - 1 && playerCount <= Consts.MIDDLE_PLAYERS + 1) {
+            mafiaCount = Consts.MAX_MAFIA_COUNT - 1;
+        } else if (playerCount >= Consts.MIDDLE_PLAYERS + 1 && playerCount <= Consts.MAX_PLAYERS) {
+            mafiaCount = Consts.MAX_MAFIA_COUNT;
         } else {
             throw new IllegalArgumentException("Неверное количество игроков!");
         }
+
         citizenCount = playerCount - mafiaCount - 1;
     }
 
@@ -63,7 +64,7 @@ public class MafiaGame {
     }
 
     private void startMessagePrinting(){
-        if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
+        if (mafiaCount == Consts.MIN_MAFIA_COUNT) {
             System.out.println("В игре " + playerCount + " игроков" + " и "+ mafiaCount + " мафия.");
         } else {
             System.out.println("В игре " + playerCount + " игроков" + " и "+ mafiaCount + " мафий.");
@@ -80,28 +81,28 @@ public class MafiaGame {
         boolean isThereCommissar = true;
         int count = 0;
         for (int i = 0; i < playerCount; i++) {
-            int roleId = ThreadLocalRandom.current().nextInt(1, IConsts.ROLE_ID_BOUND + 1);
+            int roleId = ThreadLocalRandom.current().nextInt(1, Consts.ROLE_ID_BOUND + 1);
             String playerName = "Игрок " + (i + 1);
             boolean singleCicleCondition;
             do {
-                if (roleId == IConsts.MAFIA_ID && mafias.size() < mafiaCount) {
+                if (roleId == Consts.MAFIA_ID && mafias.size() < mafiaCount) {
                     Player mafia = new Mafia(i + 1, playerName, roleId, true, 0, mafiaCount,
                             players);
                     players.add(mafia);
                     mafias.add(mafia);
                     singleCicleCondition = false;
-                } else if (roleId == IConsts.COMMISSAR_ID && isThereCommissar) {
+                } else if (roleId == Consts.COMMISSAR_ID && isThereCommissar) {
                     Player commissar = new Commissar(i + 1, playerName, roleId, true, 0);
                     players.add(commissar);
                     isThereCommissar = false;
                     singleCicleCondition = false;
-                } else if (roleId == IConsts.CITIZEN_ID && count < citizenCount) {
+                } else if (roleId == Consts.CITIZEN_ID && count < citizenCount) {
                     Player citizen = new Citizen(i + 1, playerName, roleId, true, 0);
                     count++;
                     players.add(citizen);
                     singleCicleCondition = false;
                 } else {
-                    roleId = ThreadLocalRandom.current().nextInt(1, IConsts.ROLE_ID_BOUND + 1);
+                    roleId = ThreadLocalRandom.current().nextInt(1, Consts.ROLE_ID_BOUND + 1);
                     singleCicleCondition = true;
                 }
             } while (singleCicleCondition);
@@ -116,7 +117,7 @@ public class MafiaGame {
 
         currentPlayer.printRole();
 
-        String mafia = getRoleFromDb(IConsts.MAFIA_ID);
+        String mafia = getRoleFromDb(Consts.MAFIA_ID);
         if (currentPlayer.getRole().equals(mafia)) {
             currentPlayer.teammatesPrinting();
         }
@@ -153,34 +154,34 @@ public class MafiaGame {
 
     private String getPlayerColor(Player player) {
         switch (player.getId()) {
-            case IConsts.PLAYER_ID_ONE:
-                return IConsts.ANSI_RED;
-            case IConsts.PLAYER_ID_TWO:
-                return IConsts.ANSI_GREEN;
-            case IConsts.PLAYER_ID_THREE:
-                return IConsts.ANSI_CYAN;
-            case IConsts.PLAYER_ID_FOUR:
-                return IConsts.ANSI_YELLOW;
-            case IConsts.PLAYER_ID_FIVE:
-                return IConsts.ANSI_BLUE;
-            case IConsts.PLAYER_ID_SIX:
-                return IConsts.ANSI_MAGENTA;
-            case IConsts.PLAYER_ID_SEVEN:
-                return IConsts.ANSI_BLACK;
-            case IConsts.PLAYER_ID_EIGHT:
-                return IConsts.ANSI_PINK;
-            case IConsts.PLAYER_ID_NINE:
-                return IConsts.ANSI_GRAY;
-            case IConsts.PLAYER_ID_TEN:
-                return IConsts.ANSI_BRIGHT_BLACK;
+            case Consts.PLAYER_ID_ONE:
+                return Consts.ANSI_RED;
+            case Consts.PLAYER_ID_TWO:
+                return Consts.ANSI_GREEN;
+            case Consts.PLAYER_ID_THREE:
+                return Consts.ANSI_CYAN;
+            case Consts.PLAYER_ID_FOUR:
+                return Consts.ANSI_YELLOW;
+            case Consts.PLAYER_ID_FIVE:
+                return Consts.ANSI_BLUE;
+            case Consts.PLAYER_ID_SIX:
+                return Consts.ANSI_MAGENTA;
+            case Consts.PLAYER_ID_SEVEN:
+                return Consts.ANSI_BLACK;
+            case Consts.PLAYER_ID_EIGHT:
+                return Consts.ANSI_PINK;
+            case Consts.PLAYER_ID_NINE:
+                return Consts.ANSI_GRAY;
+            case Consts.PLAYER_ID_TEN:
+                return Consts.ANSI_BRIGHT_BLACK;
             default:
-                return IConsts.ANSI_RESET;
+                return Consts.ANSI_RESET;
         }
     }
 
     private void printColoredPlayerName (Player player) {
         String colorCode = getPlayerColor(player);
-        System.out.print(player.getName() + " " + colorCode + "●" + IConsts.ANSI_RESET + " ");
+        System.out.print(player.getName() + " " + colorCode + "●" + Consts.ANSI_RESET + " ");
     }
 
     private void nightPhase() {
@@ -195,7 +196,7 @@ public class MafiaGame {
             @Override
             public void run() {
                 Player victim;
-                String mafia = getRoleFromDb(IConsts.MAFIA_ID);
+                String mafia = getRoleFromDb(Consts.MAFIA_ID);
                 if (currentPlayer.getRole().equals(mafia) && currentPlayer.getStatus()) {
                     System.out.println("Мафия, выберите, кого хотите убить этой ночью.");
                     displayEstimatedTime();
@@ -217,7 +218,7 @@ public class MafiaGame {
                 TimerTask mafiaDiscussionTask = new TimerTask() {
                     @Override
                     public void run() {
-                        String commissar = getRoleFromDb(IConsts.COMMISSAR_ID);
+                        String commissar = getRoleFromDb(Consts.COMMISSAR_ID);
                         if (currentPlayer.getRole().equals(commissar) && currentPlayer.getStatus()) {
                             System.out.println("Комиссар, выбери номер игрока, которого хочешь проверить.");
                             displayEstimatedTime();
@@ -225,7 +226,7 @@ public class MafiaGame {
                             Player target = getPlayerById(targetId);
                             if (target != null) {
                                 printColoredPlayerName(target);
-                                System.out.print("- " + target.getRole());
+                                System.out.println("- " + target.getRole());
                             }
                         }
 
@@ -239,13 +240,13 @@ public class MafiaGame {
                                 dayPhase();
                             }
                         };
-                        timer.schedule(commissarChoiceTask, IConsts.TEST_TIME_IN_MILLISECONDS);
+                        timer.schedule(commissarChoiceTask, Consts.TEST_TIME_IN_MILLISECONDS);
                     }
                 };
-                timer.schedule(mafiaDiscussionTask, IConsts.TEST_TIME_IN_MILLISECONDS);
+                timer.schedule(mafiaDiscussionTask, Consts.TEST_TIME_IN_MILLISECONDS);
             }
         };
-        timer.schedule(sleepTask, IConsts.TEST_TIME_IN_MILLISECONDS);
+        timer.schedule(sleepTask, Consts.TEST_TIME_IN_MILLISECONDS);
     }
 
     private void displayEstimatedTime() {
@@ -355,13 +356,13 @@ public class MafiaGame {
                                 }
                             }
                         };
-                        timer.schedule(votingTask, IConsts.TEST_TIME_IN_MILLISECONDS);
+                        timer.schedule(votingTask, Consts.TEST_TIME_IN_MILLISECONDS);
                     }
                 };
-                timer.schedule(discussionTask, IConsts.TEST_TIME_IN_MILLISECONDS);
+                timer.schedule(discussionTask, Consts.TEST_TIME_IN_MILLISECONDS);
             }
         };
-        timer.schedule(afterNightTask, IConsts.TEST_TIME_IN_MILLISECONDS);
+        timer.schedule(afterNightTask, Consts.TEST_TIME_IN_MILLISECONDS);
     }
 
     private int getProgramVotingChoice(List<Integer> eliminatedIds, int id) {
@@ -425,9 +426,9 @@ public class MafiaGame {
 
         for (Player player : players) {
             if (player.getStatus()) {
-                String mafia = getRoleFromDb(IConsts.MAFIA_ID);
-                String commissar = getRoleFromDb(IConsts.COMMISSAR_ID);
-                String citizen = getRoleFromDb(IConsts.CITIZEN_ID);
+                String mafia = getRoleFromDb(Consts.MAFIA_ID);
+                String commissar = getRoleFromDb(Consts.COMMISSAR_ID);
+                String citizen = getRoleFromDb(Consts.CITIZEN_ID);
                 if (player.getRole().equals(mafia)) {
                     mafiaAlive++;
                 } else if (player.getRole().equals(citizen) || player.getRole().equals(commissar)) {
@@ -442,6 +443,7 @@ public class MafiaGame {
 
         return mafiaAlive == 0;
     }
+
     private String determineWinner() {
 
         int mafiaAlive = 0;
@@ -449,8 +451,8 @@ public class MafiaGame {
 
         for (Player player : players) {
             if (player.getStatus()) {
-                String mafia = getRoleFromDb(IConsts.MAFIA_ID);
-                String citizen = getRoleFromDb(IConsts.CITIZEN_ID);
+                String mafia = getRoleFromDb(Consts.MAFIA_ID);
+                String citizen = getRoleFromDb(Consts.CITIZEN_ID);
                 if (player.getRole().equals(mafia)) {
                     mafiaAlive++;
                 } else if (player.getRole().equals(citizen)) {
@@ -471,13 +473,13 @@ public class MafiaGame {
 
     private void endMessagePrinting() {
         for (Player player : players) {
-            String mafia = getRoleFromDb(IConsts.MAFIA_ID);
+            String mafia = getRoleFromDb(Consts.MAFIA_ID);
             if (player.getRole().equals(mafia)) {
                 printColoredPlayerName(player);
                 System.out.print(" ");
             }
         }
-        if (mafiaCount == IConsts.MIN_MAFIA_COUNT) {
+        if (mafiaCount == Consts.MIN_MAFIA_COUNT) {
             System.out.println("был мафией!");
         }
         else {
@@ -499,7 +501,7 @@ public class MafiaGame {
             }
             s.nextLine();
         }
-        db.deleteDataRoleTable();
+        db.deleteRoleTable();
         if (choice == 0) {
             System.exit(0);
         }

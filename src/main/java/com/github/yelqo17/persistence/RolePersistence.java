@@ -4,10 +4,15 @@ import com.github.yelqo17.database.MyDataBase;
 
 import java.util.Map;
 public class RolePersistence {
+
     private final MyDataBase db = MyDataBase.getInstance();
+
     private static final String TABLE_NAME = "role";
+
     private static final String ID_NAME = "id";
+
     private static final String ROLE_NAME = "name";
+
     public void createRole(String role_name) {
         String sql = """
                 insert into mafia.role
@@ -27,11 +32,6 @@ public class RolePersistence {
     }
 
     protected String convertRole(Map<String, String> fromDB) {
-        try {
-            return String.valueOf(fromDB.get(ROLE_NAME));
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
+        return String.valueOf(fromDB.get(ROLE_NAME));
     }
 }
