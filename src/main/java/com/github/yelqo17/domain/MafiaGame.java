@@ -43,6 +43,14 @@ public class MafiaGame {
         citizenCount = playerCount - mafiaCount - 1;
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public List<Player> getMafias() {
+        return mafias;
+    }
+
     public void startGame() {
         startMessagePrinting();
 
@@ -50,13 +58,9 @@ public class MafiaGame {
 
         rolesCreation();
 
-        eliminatedIds = new ArrayList<>();
-
-        mafias = new ArrayList<>();
-
-        players = new ArrayList<>();
-
         rolesDistribution();
+
+        printRole();
 
         displayAlivePlayers();
 
@@ -77,7 +81,13 @@ public class MafiaGame {
         rolePersistence.createRole("Мирный житель");
     }
 
-    private void rolesDistribution() {
+    public void rolesDistribution() {
+        eliminatedIds = new ArrayList<>();
+
+        players = new ArrayList<>();
+
+        mafias = new ArrayList<>();
+
         boolean isThereCommissar = true;
         int count = 0;
         for (int i = 0; i < playerCount; i++) {
@@ -86,8 +96,7 @@ public class MafiaGame {
             boolean singleCicleCondition;
             do {
                 if (roleId == Consts.MAFIA_ID && mafias.size() < mafiaCount) {
-                    Player mafia = new Mafia(i + 1, playerName, roleId, true, 0, mafiaCount,
-                            players);
+                    Player mafia = new Mafia(i + 1, playerName, roleId, true, 0, mafiaCount, players);
                     players.add(mafia);
                     mafias.add(mafia);
                     singleCicleCondition = false;
@@ -107,7 +116,6 @@ public class MafiaGame {
                 }
             } while (singleCicleCondition);
         }
-        printRole();
     }
 
     private void printRole(){
@@ -452,10 +460,11 @@ public class MafiaGame {
         for (Player player : players) {
             if (player.getStatus()) {
                 String mafia = getRoleFromDb(Consts.MAFIA_ID);
+                String commissar = getRoleFromDb(Consts.COMMISSAR_ID);
                 String citizen = getRoleFromDb(Consts.CITIZEN_ID);
                 if (player.getRole().equals(mafia)) {
                     mafiaAlive++;
-                } else if (player.getRole().equals(citizen)) {
+                } else if (player.getRole().equals(citizen) || player.getRole().equals(commissar)) {
                     citizensAlive++;
                 }
             }
