@@ -77,7 +77,7 @@ public class MafiaGame {
 
     private void rolesCreation() {
         rolePersistence.createRole("Мафия");
-        rolePersistence.createRole("Коммисар");
+        rolePersistence.createRole("Комиссар");
         rolePersistence.createRole("Мирный житель");
     }
 

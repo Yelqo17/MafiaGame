@@ -27,12 +27,13 @@ public class RolePersistence_ConvertRole_Test {
     public void convertCommissarRoleTest() {
         Map<String, String> input = Map.of(
                 "id", "2",
-                "name", "Коммисар"
+                "name", "Комиссар"
         );
         String role = rolePersistence.convertRole(input);
 
-        then(role).isEqualTo("Коммисар");
+        then(role).isEqualTo("Комиссар");
     }
+
     @Test
     @DisplayName("convert citizen role test")
     public void convertCitizenRoleTest() {
@@ -44,5 +45,4 @@ public class RolePersistence_ConvertRole_Test {
 
         then(role).isEqualTo("Мирный житель");
     }
-
 }
